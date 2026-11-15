@@ -58,7 +58,7 @@ function App() {
       observer.disconnect();
       shell.classList.remove('motion-enhanced');
     };
-  }, [filteredProducts]);
+  }, [category, query, sort]);
   useEffect(() => {
     const hero = document.querySelector<HTMLElement>('.hero');
     const photo = hero?.querySelector<HTMLElement>('.hero-image img');
