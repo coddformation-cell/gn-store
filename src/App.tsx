@@ -16,7 +16,6 @@ const products: Product[] = [
   { id: 'chapeau', name: 'Chapeau de ville', category: 'Chapeaux & casquettes', image: '/gallery/6.jpeg', description: 'Chapeau présenté avec une tenue de la boutique. Taille et disponibilité à confirmer.' },
   { id: 'casquettes', name: 'Casquettes', category: 'Chapeaux & casquettes', image: '/gallery/7.jpeg', description: 'Différents modèles de casquettes visibles en boutique. Modèles et couleurs selon disponibilité.' },
   { id: 'vetements', name: 'Tenue habillée', category: 'Vêtements', image: '/gallery/9.jpeg', description: 'Tenue habillée présentée sur mannequin. Articles, tailles et disponibilité à confirmer auprès de la boutique.' },
-  { id: 'chaussures', name: 'Chaussures', category: 'Chaussures', image: '/gallery/12.jpeg', description: 'La boutique propose également des chaussures. Demandez-nous les modèles, pointures et disponibilités du moment.' },
   { id: 'accessoires', name: 'Accessoires & lunettes', category: 'Accessoires', image: '/gallery/8.jpeg', description: 'Une sélection d’accessoires photographiée en boutique. Écrivez-nous pour confirmer le modèle.' },
 ];
 
@@ -94,7 +93,7 @@ function App() {
           <div className="product-info"><div><span className="product-category">{product.category}</span><h3>{product.name}</h3></div><button type="button" className="add-button" onClick={() => addToCart(product)} aria-label={`Ajouter ${product.name} au panier`}>＋</button></div>
           <p className="price-note">Prix & disponibilité sur demande</p>
         </article>)}</div>
-        {filteredProducts.length === 0 && <p className="empty-state">Aucun article ne correspond à cette recherche. Essayez une autre catégorie ou contactez la boutique.</p>}
+        {filteredProducts.length === 0 && category === 'Chaussures' && !query.trim() ? <div className="empty-state"><p>Les chaussures sont proposées en boutique. Demandez-nous les modèles et pointures actuellement disponibles.</p><a className="button button-dark" href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent('Bonjour GN Store, quels modèles de chaussures et quelles pointures sont actuellement disponibles ?')}`} target="_blank" rel="noreferrer">Demander les modèles sur WhatsApp <span>↗</span></a></div> : filteredProducts.length === 0 && <p className="empty-state">Aucun article ne correspond à cette recherche. Essayez une autre catégorie ou contactez la boutique.</p>}
         <p className="catalog-footnote">Notre catalogue évolue avec les arrivages. Le montant final est confirmé par la boutique avant validation.</p>
       </section>
 
