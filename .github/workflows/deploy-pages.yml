@@ -2,7 +2,7 @@ name: Build and deploy GN Store
 
 on:
   push:
-    branches: [master]
+    branches: [master, gh-pages]
   workflow_dispatch:
 
 permissions:
@@ -20,6 +20,8 @@ jobs:
     steps:
       - name: Check out source
         uses: actions/checkout@v6
+        with:
+          ref: master
       - name: Set up Node.js
         uses: actions/setup-node@v7
         with:
@@ -37,6 +39,7 @@ jobs:
           path: ./dist
 
   deploy:
+    if: github.ref == 'refs/heads/gh-pages'
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
