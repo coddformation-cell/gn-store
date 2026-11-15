@@ -21,6 +21,7 @@ const products: Product[] = [
 
 const categories = ['Tout voir', 'Vêtements', 'Chaussures', 'Chapeaux & casquettes', 'Bijoux', 'Accessoires'];
 function App() {
+  const [loaderState, setLoaderState] = useState<'loading' | 'leaving' | 'done'>('loading');
   const [cart, setCart] = useState<CartLine[]>(() => {
     try { return JSON.parse(localStorage.getItem('gn-store-cart') ?? '[]') as CartLine[]; }
     catch { return []; }
@@ -33,6 +34,39 @@ function App() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => { localStorage.setItem('gn-store-cart', JSON.stringify(cart)); }, [cart]);
+  useEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      setLoaderState('done');
+      return;
+    }
+
+    const startedAt = performance.now();
+    let exitTimer = 0;
+    let removeTimer = 0;
+    let fallbackTimer = 0;
+    let finished = false;
+    const finishLoading = () => {
+      if (finished) return;
+      finished = true;
+      window.clearTimeout(fallbackTimer);
+      window.removeEventListener('load', finishLoading);
+      const remainingMinimum = Math.max(0, 1450 - (performance.now() - startedAt));
+      exitTimer = window.setTimeout(() => {
+        setLoaderState('leaving');
+        removeTimer = window.setTimeout(() => setLoaderState('done'), 720);
+      }, remainingMinimum);
+    };
+
+    fallbackTimer = window.setTimeout(finishLoading, 2600);
+    if (document.readyState === 'complete') finishLoading();
+    else window.addEventListener('load', finishLoading, { once: true });
+    return () => {
+      window.clearTimeout(exitTimer);
+      window.clearTimeout(removeTimer);
+      window.clearTimeout(fallbackTimer);
+      window.removeEventListener('load', finishLoading);
+    };
+  }, []);
   useEffect(() => {
     const shell = document.querySelector('.site-shell');
     const revealItems = shell?.querySelectorAll<HTMLElement>('[data-motion-reveal]');
@@ -86,6 +120,34 @@ function App() {
     };
   }, []);
   useEffect(() => {
+    const orb = document.querySelector<HTMLElement>('.scroll-orb');
+    if (!orb || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    let frame = 0;
+    const updateOrb = () => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => {
+        const maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+        const progress = Math.max(0, Math.min(1, window.scrollY / maxScroll));
+        const descent = 12 + progress * window.innerHeight * 0.68;
+        const drift = Math.sin(progress * Math.PI * 2) * Math.min(38, window.innerWidth * 0.04);
+        const scale = 0.86 + Math.sin(progress * Math.PI) * 0.14;
+        orb.style.setProperty('--orb-y', `${descent}px`);
+        orb.style.setProperty('--orb-x', `${drift}px`);
+        orb.style.setProperty('--orb-scale', String(scale));
+      });
+    };
+
+    updateOrb();
+    window.addEventListener('scroll', updateOrb, { passive: true });
+    window.addEventListener('resize', updateOrb);
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener('scroll', updateOrb);
+      window.removeEventListener('resize', updateOrb);
+    };
+  }, []);
+  useEffect(() => {
     const close = (event: KeyboardEvent) => { if (event.key === 'Escape') { setSelected(null); setCartOpen(false); setMenuOpen(false); } };
     window.addEventListener('keydown', close);
     return () => window.removeEventListener('keydown', close);
@@ -132,6 +194,8 @@ function App() {
   };
 
   return <div className="site-shell">
+    {loaderState !== 'done' && <div className={`site-loader${loaderState === 'leaving' ? ' is-leaving' : ''}`} role="status" aria-live="polite" aria-label="Chargement de GN Store"><div className="loader-content"><div className="loader-orb" aria-hidden="true"/><p>GN <em>store</em></p><span>ARTISAN DU STYLE · ABIDJAN</span><div className="loader-track"><i/></div><small>PRÉPARATION DE LA SÉLECTION</small></div></div>}
+    <div className="scroll-orb" aria-hidden="true"/>
     <div className="announcement">GN Store · Artisan du style <span>Abidjan, Côte d’Ivoire</span></div>
     <header className="site-header">
       <a href="#accueil" className="brand" aria-label="GN Store, accueil"><img src={logo} alt="Logo officiel GN Store — By Fabian"/><span className="brand-name">GN <b>store</b><small>ARTISAN DU STYLE</small></span></a>
