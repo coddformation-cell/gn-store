@@ -10,3 +10,28 @@
 @media(max-width:600px){.announcement{font-size:8px;gap:10px;height:30px}.site-header{height:70px;padding:0 16px;gap:13px}.brand{gap:7px}.brand img{width:40px;height:40px}.brand-name{font-size:14px}.brand-name small{font-size:6px}.menu-toggle,.cart-button{font-size:10px;padding:4px}.main-nav{top:69px}.hero{display:flex;flex-direction:column-reverse;align-items:stretch;gap:24px;padding:15px 16px 40px;min-height:unset}.hero-copy{padding:26px 3px 0}.hero h1{font-size:53px}.hero-copy>p:not(.eyebrow){font-size:12px}.hero-signature{margin-top:32px}.hero-image{height:390px}.hero-index{bottom:14px}.intro-strip{padding:14px 16px;min-height:72px}.intro-strip p{font-size:14px;max-width:205px}.intro-strip span{font-size:7px}.shop-section{padding:65px 16px 60px}.section-top{display:block}.section-top h2,.editorial h2{font-size:39px}.section-note{margin-top:14px;max-width:380px}.catalog-controls{margin-top:26px}.search-box input{width:min(53vw,210px)}.category-tabs{margin-right:-16px;padding-right:16px}.product-grid{gap:26px 10px}.product-info h3{font-size:14px}.product-category{font-size:7px}.add-button{width:28px;height:28px}.price-note{font-size:8px}.editorial{grid-template-columns:1fr}.editorial-image{min-height:390px}.editorial-copy{padding:48px 22px 70px}.visit-section{padding:43px 20px;display:block}.visit-section .button{margin-top:20px}.footer{padding:38px 20px 0;grid-template-columns:1fr 1fr;gap:25px 14px}.footer-brand{grid-column:1/-1}.footer-contact a{font-size:10px}.footer-bottom{margin-top:6px}.detail-panel{grid-template-columns:1fr;max-height:92vh}.detail-panel>img{height:38vh;min-height:220px;max-height:340px}.detail-copy{padding:24px}.detail-copy h2{font-size:29px}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
 .empty-state p{margin:0}.empty-state a{display:inline-flex;margin:18px auto 0}
+
+/* Soft 3D depth: photo frame, tactile product cards, and a WhatsApp contact tile. */
+.hero-image{transform:perspective(1400px) rotateY(-2deg) rotateX(1deg);transform-style:preserve-3d;box-shadow:22px 30px 58px #24201922;transition:transform .55s ease,box-shadow .55s ease}
+.hero-image:before{content:"";position:absolute;inset:14px;border:1px solid #ffffff70;z-index:1;pointer-events:none;transform:translateZ(26px)}
+.hero-image:hover{transform:perspective(1400px) rotateY(0) rotateX(0) translateY(-5px);box-shadow:28px 38px 70px #24201930}
+.image-caption{transform:translateZ(24px)}
+.product-card{transform-style:preserve-3d}
+.product-photo{transform-style:preserve-3d;transition:transform .45s ease,box-shadow .45s ease}
+.product-card:hover .product-photo{transform:perspective(1100px) rotateY(-1.5deg) rotateX(1.5deg) translateY(-4px);box-shadow:14px 22px 34px #24201920}
+.button{transform-style:preserve-3d;box-shadow:0 5px 0 #0002,0 10px 22px #17151218}
+.button:hover{transform:perspective(700px) translateY(-3px) rotateX(2deg);box-shadow:0 8px 0 #0002,0 16px 26px #17151224}
+.visit-section{position:relative;isolation:isolate;overflow:hidden}
+.visit-section:before{content:"";position:absolute;z-index:-1;right:12%;top:-165px;width:390px;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle at 34% 28%,#d7bd8a 0,#9d8153 18%,#444038 51%,#22211f 72%);box-shadow:inset 24px 22px 44px #ffffff2b,inset -30px -35px 52px #0009,0 0 90px #ad8f5b3d;opacity:.52}
+.footer-contact{position:relative;padding:18px 20px 17px;min-width:250px;border:1px solid #e4dac8;border-radius:14px;background:linear-gradient(145deg,#fffefa,#eee8dc);box-shadow:9px 12px 25px #30281b12,inset 1px 1px 0 #fff;transform-style:preserve-3d;transition:transform .4s ease,box-shadow .4s ease}
+.footer-contact:hover{transform:perspective(900px) rotateX(2deg) rotateY(-4deg) translateY(-4px);box-shadow:15px 21px 36px #30281b20,inset 1px 1px 0 #fff}
+.footer-contact-line{display:flex;align-items:center;justify-content:space-between;gap:14px;width:100%;margin-top:12px}
+.footer-phone{font-size:13px;font-weight:600;letter-spacing:.035em;color:var(--ink);white-space:nowrap}
+.footer-contact .whatsapp-icon{display:grid;place-items:center;width:46px;height:46px;flex:none;border-radius:50%;color:#fff;background:linear-gradient(145deg,#27d66f,#07884b);box-shadow:inset 2px 2px 4px #ffffff6b,inset -3px -4px 7px #00562b55,0 7px 13px #08713a45;transform:translateZ(22px);transition:transform .3s ease,box-shadow .3s ease}
+.footer-contact .whatsapp-icon svg{width:24px;height:24px}
+.footer-contact .whatsapp-icon:hover{transform:translateZ(28px) rotateY(-12deg) scale(1.07);box-shadow:inset 2px 2px 4px #ffffff6b,inset -3px -4px 7px #00562b55,0 10px 18px #08713a60}
+.footer-contact .whatsapp-icon:focus-visible{outline:2px solid #126b3c;outline-offset:4px}
+.footer-contact-note{font-size:9px;color:#77716a}
+@media(max-width:600px){.hero-image{transform:none;box-shadow:12px 18px 34px #24201920}.visit-section:before{right:-180px;top:-150px;width:330px}.footer-contact{grid-column:1/-1;min-width:0;padding:15px}.footer-phone{font-size:12px}.footer-contact .whatsapp-icon{width:42px;height:42px}}
+@media(hover:none){.hero-image:hover,.product-card:hover .product-photo,.footer-contact:hover,.footer-contact .whatsapp-icon:hover,.button:hover{transform:none}}
+@media(prefers-reduced-motion:reduce){.hero-image,.product-card:hover .product-photo,.footer-contact:hover,.footer-contact .whatsapp-icon:hover,.button:hover{transform:none!important}}
