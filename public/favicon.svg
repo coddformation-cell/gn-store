@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="GN Store logo">
+  <defs>
+    <linearGradient id="gold" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#f8e0a2"/>
+      <stop offset="25%" stop-color="#f0c96b"/>
+      <stop offset="50%" stop-color="#d9a63c"/>
+      <stop offset="75%" stop-color="#f5d789"/>
+      <stop offset="100%" stop-color="#9a6920"/>
+    </linearGradient>
+  </defs>
+  <rect width="120" height="120" rx="26" fill="#0d0d11"/>
+  <circle cx="60" cy="60" r="42" fill="none" stroke="url(#gold)" stroke-width="6"/>
+  <path d="M39 36 L58 60 L39 84 M81 36 L62 60 L81 84" fill="none" stroke="url(#gold)" stroke-linecap="round" stroke-linejoin="round" stroke-width="9"/>
+  <path d="M44 38 L76 82" fill="none" stroke="url(#gold)" stroke-linecap="round" stroke-width="8" opacity="0.9"/>
+</svg>
