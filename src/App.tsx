@@ -34,6 +34,58 @@ function App() {
 
   useEffect(() => { localStorage.setItem('gn-store-cart', JSON.stringify(cart)); }, [cart]);
   useEffect(() => {
+    const shell = document.querySelector('.site-shell');
+    const revealItems = shell?.querySelectorAll<HTMLElement>('[data-motion-reveal]');
+    if (!shell || !revealItems?.length) return;
+
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reducedMotion || !('IntersectionObserver' in window)) {
+      revealItems.forEach((item) => item.classList.add('is-visible'));
+      return;
+    }
+
+    shell.classList.add('motion-enhanced');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add('is-visible');
+        observer.unobserve(entry.target);
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -6% 0px' });
+
+    revealItems.forEach((item) => observer.observe(item));
+    return () => {
+      observer.disconnect();
+      shell.classList.remove('motion-enhanced');
+    };
+  }, [filteredProducts]);
+  useEffect(() => {
+    const hero = document.querySelector<HTMLElement>('.hero');
+    const photo = hero?.querySelector<HTMLElement>('.hero-image img');
+    const sphere = hero;
+    if (!hero || !photo || !sphere || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    let frame = 0;
+    const updateDepth = () => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => {
+        const bounds = hero.getBoundingClientRect();
+        const progress = Math.max(0, Math.min(1, (window.innerHeight - bounds.top) / (window.innerHeight + bounds.height)));
+        photo.style.setProperty('--photo-drift', `${progress * -34}px`);
+        sphere.style.setProperty('--sphere-drift', `${progress * 62}px`);
+      });
+    };
+
+    updateDepth();
+    window.addEventListener('scroll', updateDepth, { passive: true });
+    window.addEventListener('resize', updateDepth);
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener('scroll', updateDepth);
+      window.removeEventListener('resize', updateDepth);
+    };
+  }, []);
+  useEffect(() => {
     const close = (event: KeyboardEvent) => { if (event.key === 'Escape') { setSelected(null); setCartOpen(false); setMenuOpen(false); } };
     window.addEventListener('keydown', close);
     return () => window.removeEventListener('keydown', close);
@@ -97,13 +149,13 @@ function App() {
         <div className="hero-index">GN / 2026</div>
       </section>
 
-      <section className="intro-strip"><span>01 / SÉLECTION</span><p>Une adresse de style, une sélection pour toutes les envies.</p><span>ABIDJAN · CI</span></section>
+      <section className="intro-strip" data-motion-reveal><span>01 / SÉLECTION</span><p>Une adresse de style, une sélection pour toutes les envies.</p><span>ABIDJAN · CI</span></section>
 
       <section className="shop-section" id="boutique">
-        <div className="section-top"><div><p className="eyebrow">La sélection GN</p><h2>À chacun son <em>essentiel.</em></h2></div><p className="section-note">Les pièces et tarifs varient selon les arrivages. Écrivez-nous pour confirmer le modèle et sa disponibilité.</p></div>
-        <div className="catalog-controls"><label className="search-box"><span aria-hidden="true">⌕</span><input type="search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Rechercher un article" aria-label="Rechercher un article"/></label><label className="sort-control"><span>Trier</span><select value={sort} onChange={(event) => setSort(event.target.value)} aria-label="Trier les articles"><option value="featured">À la une</option><option value="name">Nom A–Z</option></select></label></div>
-        <div className="category-tabs" role="group" aria-label="Filtrer par catégorie">{categories.map((item) => <button key={item} type="button" className={category === item ? 'active' : ''} onClick={() => setCategory(item)}>{item}</button>)}</div>
-        <div className="product-grid">{filteredProducts.map((product, index) => <article className="product-card" key={product.id} onPointerMove={(event) => moveTilt(event, '.product-photo', 5, 7)} onPointerLeave={(event) => resetTilt(event, '.product-photo')}>
+        <div className="section-top" data-motion-reveal><div><p className="eyebrow">La sélection GN</p><h2>À chacun son <em>essentiel.</em></h2></div><p className="section-note">Les pièces et tarifs varient selon les arrivages. Écrivez-nous pour confirmer le modèle et sa disponibilité.</p></div>
+        <div className="catalog-controls" data-motion-reveal><label className="search-box"><span aria-hidden="true">⌕</span><input type="search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Rechercher un article" aria-label="Rechercher un article"/></label><label className="sort-control"><span>Trier</span><select value={sort} onChange={(event) => setSort(event.target.value)} aria-label="Trier les articles"><option value="featured">À la une</option><option value="name">Nom A–Z</option></select></label></div>
+        <div className="category-tabs" role="group" aria-label="Filtrer par catégorie" data-motion-reveal>{categories.map((item) => <button key={item} type="button" className={category === item ? 'active' : ''} onClick={() => setCategory(item)}>{item}</button>)}</div>
+        <div className="product-grid">{filteredProducts.map((product, index) => <article className="product-card" data-motion-reveal key={product.id} style={{ transitionDelay: `${Math.min(index, 5) * 75}ms` }} onPointerMove={(event) => moveTilt(event, '.product-photo', 5, 7)} onPointerLeave={(event) => resetTilt(event, '.product-photo')}>
           <button className="product-photo" type="button" onClick={() => setSelected(product)} aria-label={`Voir ${product.name}`}><img src={asset(product.image)} alt={product.name} loading={index > 2 ? 'lazy' : 'eager'}/><span className="photo-number">0{index + 1}</span><span className="quick-view">Voir l’article ↗</span></button>
           <div className="product-info"><div><span className="product-category">{product.category}</span><h3>{product.name}</h3></div><button type="button" className="add-button" onClick={() => addToCart(product)} aria-label={`Ajouter ${product.name} au panier`}>＋</button></div>
           <p className="price-note">Prix & disponibilité sur demande</p>
@@ -112,12 +164,12 @@ function App() {
         <p className="catalog-footnote">Notre catalogue évolue avec les arrivages. Le montant final est confirmé par la boutique avant validation.</p>
       </section>
 
-      <section className="editorial" id="histoire"><div className="editorial-image"><img src={asset('/gallery/11.jpeg')} alt="Intérieur de la boutique GN Store" loading="lazy"/><span>Une boutique, mille façons d’être soi.</span></div><div className="editorial-copy"><p className="eyebrow">Notre maison · Depuis Abidjan</p><h2>La personnalité<br/>est dans le <em>détail.</em></h2><p>GN Store rassemble vêtements, chaussures, chapeaux, casquettes et bijoux dans une même adresse. Une sélection vivante, faite pour accompagner votre style au quotidien.</p><a href="#contact" className="text-link">Nous rendre visite <span>↗</span></a><div className="editorial-mark">GN<span>®</span></div></div></section>
+      <section className="editorial" id="histoire"><div className="editorial-image" data-motion-reveal><img src={asset('/gallery/11.jpeg')} alt="Intérieur de la boutique GN Store" loading="lazy"/><span>Une boutique, mille façons d’être soi.</span></div><div className="editorial-copy" data-motion-reveal><p className="eyebrow">Notre maison · Depuis Abidjan</p><h2>La personnalité<br/>est dans le <em>détail.</em></h2><p>GN Store rassemble vêtements, chaussures, chapeaux, casquettes et bijoux dans une même adresse. Une sélection vivante, faite pour accompagner votre style au quotidien.</p><a href="#contact" className="text-link">Nous rendre visite <span>↗</span></a><div className="editorial-mark">GN<span>®</span></div></div></section>
 
-      <section className="visit-section"><div><p className="eyebrow">À votre écoute</p><h2>Un modèle vous plaît ?</h2><p>Envoyez-nous une photo ou une description. Nous vous répondrons sur les tailles, la disponibilité et le prix.</p></div><a className="button button-light" href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent('Bonjour GN Store, je souhaite des renseignements sur un article.')}`} target="_blank" rel="noreferrer">Écrire sur WhatsApp <span>↗</span></a></section>
+      <section className="visit-section"><div data-motion-reveal><p className="eyebrow">À votre écoute</p><h2>Un modèle vous plaît ?</h2><p>Envoyez-nous une photo ou une description. Nous vous répondrons sur les tailles, la disponibilité et le prix.</p></div><a data-motion-reveal className="button button-light" href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent('Bonjour GN Store, je souhaite des renseignements sur un article.')}`} target="_blank" rel="noreferrer">Écrire sur WhatsApp <span>↗</span></a></section>
     </main>
 
-    <footer className="footer" id="contact"><div className="footer-brand"><img src={logo} alt="Logo officiel GN Store"/><div><strong>GN <b>store</b></strong><span>ARTISAN DU STYLE</span></div></div><div className="footer-address"><span>RETROUVEZ-NOUS</span><p>Abidjan, Côte d’Ivoire</p><small>Adresse précise à confirmer auprès de la boutique.</small></div><div className="footer-contact"><span>CONTACT & COMMANDES</span><div className="footer-contact-line"><span className="footer-phone">+225 07 08 02 83 03</span><a className="whatsapp-icon" href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent('Bonjour GN Store, je souhaite des renseignements.')}`} target="_blank" rel="noreferrer" aria-label="Écrire à GN Store sur WhatsApp au +225 07 08 02 83 03" title="Écrire sur WhatsApp"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12.04 2a9.9 9.9 0 0 0-8.52 14.94L2 22l5.23-1.37A9.94 9.94 0 1 0 12.04 2Zm0 17.99a8.02 8.02 0 0 1-4.1-1.13l-.3-.18-3.1.81.83-3.02-.2-.31a8.06 8.06 0 1 1 6.87 3.83Zm4.42-6.04c-.24-.12-1.42-.7-1.64-.78-.22-.08-.38-.12-.54.12-.16.24-.62.78-.76.94-.14.16-.28.18-.52.06-.24-.12-1.02-.38-1.94-1.2-.72-.64-1.2-1.43-1.34-1.67-.14-.24-.02-.37.1-.49.11-.11.24-.28.36-.42.12-.14.16-.24.24-.4.08-.16.04-.3-.02-.42-.06-.12-.54-1.3-.74-1.78-.2-.47-.4-.41-.54-.42h-.46c-.16 0-.42.06-.64.3-.22.24-.84.82-.84 2s.86 2.32.98 2.48c.12.16 1.69 2.58 4.09 3.62.57.25 1.02.4 1.37.51.57.18 1.08.16 1.49.1.46-.07 1.42-.58 1.62-1.14.2-.56.2-1.04.14-1.14-.06-.1-.22-.16-.46-.28Z"/></svg></a></div><small className="footer-contact-note">Message direct sur WhatsApp</small></div><div className="footer-bottom"><span>© 2026 GN Store · By Fabian</span><a href="#accueil">Retour en haut ↑</a></div></footer>
+    <footer className="footer" id="contact"><div className="footer-brand" data-motion-reveal><img src={logo} alt="Logo officiel GN Store"/><div><strong>GN <b>store</b></strong><span>ARTISAN DU STYLE</span></div></div><div className="footer-address" data-motion-reveal><span>RETROUVEZ-NOUS</span><p>Abidjan, Côte d’Ivoire</p><small>Adresse précise à confirmer auprès de la boutique.</small></div><div className="footer-contact" data-motion-reveal><span>CONTACT & COMMANDES</span><div className="footer-contact-line"><a className="whatsapp-icon" href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent('Bonjour GN Store, je souhaite des renseignements.')}`} target="_blank" rel="noreferrer" aria-label="Contacter GN Store sur WhatsApp" title="Contacter GN Store sur WhatsApp"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12.04 2a9.9 9.9 0 0 0-8.52 14.94L2 22l5.23-1.37A9.94 9.94 0 1 0 12.04 2Zm0 17.99a8.02 8.02 0 0 1-4.1-1.13l-.3-.18-3.1.81.83-3.02-.2-.31a8.06 8.06 0 1 1 6.87 3.83Zm4.42-6.04c-.24-.12-1.42-.7-1.64-.78-.22-.08-.38-.12-.54.12-.16.24-.62.78-.76.94-.14.16-.28.18-.52.06-.24-.12-1.02-.38-1.94-1.2-.72-.64-1.2-1.43-1.34-1.67-.14-.24-.02-.37.1-.49.11-.11.24-.28.36-.42.12-.14.16-.24.24-.4.08-.16.04-.3-.02-.42-.06-.12-.54-1.3-.74-1.78-.2-.47-.4-.41-.54-.42h-.46c-.16 0-.42.06-.64.3-.22.24-.84.82-.84 2s.86 2.32.98 2.48c.12.16 1.69 2.58 4.09 3.62.57.25 1.02.4 1.37.51.57.18 1.08.16 1.49.1.46-.07 1.42-.58 1.62-1.14.2-.56.2-1.04.14-1.14-.06-.1-.22-.16-.46-.28Z"/></svg></a></div></div><div className="footer-bottom" data-motion-reveal><span>© 2026 GN Store · By Fabian</span><a href="#accueil">Retour en haut ↑</a></div></footer>
 
     {selected && <div className="overlay" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setSelected(null); }}><section className="detail-panel" role="dialog" aria-modal="true" aria-labelledby="detail-title"><button className="close-button" onClick={() => setSelected(null)} aria-label="Fermer">×</button><img src={asset(selected.image)} alt={selected.name}/><div className="detail-copy"><span className="product-category">{selected.category}</span><h2 id="detail-title">{selected.name}</h2><p>{selected.description}</p><strong>Prix et disponibilité sur demande</strong><button className="button button-dark" onClick={() => { addToCart(selected); setSelected(null); setCartOpen(true); }}>Ajouter au panier <span>＋</span></button></div></section></div>}
 
