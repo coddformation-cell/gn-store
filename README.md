@@ -1,81 +1,24 @@
 # GN Store
 
-Site vitrine premium pour une boutique de bijoux, cuir et lifestyle, conçu pour présenter la marque de manière élégante et convertir les visiteurs vers WhatsApp.
+Boutique mode et accessoires à Abidjan. Cette vitrine React/Vite présente les photos fournies par la boutique, permet de parcourir et filtrer une sélection, de gérer un panier local et de transmettre une demande de commande sur WhatsApp.
 
-## Vision du projet
-
-- Une identité visuelle premium en noir et or
-- Une mise en scène inspirée du luxe urbain et des accessoires de mode
-- Des sections de présentation de collection, best sellers et boutique
-- Un appel à l’action direct vers WhatsApp pour les commandes
-- Une architecture React + Vite simple, rapide et facilement déployable
-
-## Stack
-
-- React 19
-- TypeScript
-- Vite
-- GSAP + ScrollTrigger
-- Lenis smooth scroll
-
-## Prérequis
-
-- Node.js 18+
-- npm 9+
-
-## Installation
+## Lancer le projet
 
 ```bash
 npm install
+npm run dev
 ```
 
-## Lancement du site en local
+Build de production : `npm run build`. Aperçu local : `npm run preview`.
 
-```bash
-npm run dev -- --host 0.0.0.0
-```
+## Informations commerciales à confirmer
 
-Ensuite ouvrez l’URL affichée dans le terminal, généralement :
+Les prix, variantes, tailles, stocks, modalités de livraison et adresse complète ne figuraient pas dans les ressources reçues. Le site ne les invente pas : les produits indiquent « prix et disponibilité sur demande », et le panier envoie une demande de confirmation à la boutique avant finalisation. Les photos sont des vues de la boutique et de présentoirs, pas des visuels individuels détourés.
 
-```bash
-http://localhost:5173
-```
-
-## Build de production
-
-```bash
-npm run build
-```
-
-## Aperçu de production
-
-```bash
-npm run preview -- --host 0.0.0.0
-```
-
-## Structure du projet
-
-```text
-GN STORE/
-├── public/
-│   ├── gallery/
-│   └── favicon.svg
-├── src/
-│   ├── App.tsx
-│   ├── App.css
-│   ├── index.css
-│   └── main.tsx
-├── index.html
-├── package.json
-├── README.md
-└── vite.config.ts
-```
+Le contact WhatsApp repris de l’enseigne est le **+225 07 08 02 83 03**. Vérifier qu’il s’agit bien du numéro de commande avant publication.
 
 ## Déploiement
 
-Le projet est prêt pour un déploiement statique sur Vercel, Netlify ou un hébergement classique. Il suffit de lancer le build et de servir le dossier `dist`.
+La commande `npm run build` produit le dossier `dist`, à servir comme site statique. Le projet conserve la base Vite `/gn-store/`, adaptée au dépôt GitHub `gn-store` sur GitHub Pages. Pour un domaine personnalisé ou Vercel à la racine, ajuster `base` dans `vite.config.ts`, puis reconstruire. Aucun déploiement n’est déclenché par le projet.
 
-## Contact boutique
-
-- WhatsApp : +225 07 08 02 83 03
-- Univers : bijoux, cuir, lifestyle
+Avant publication, confirmer l’URL publique et aligner l’URL du sitemap `public/sitemap.xml` ainsi que les métadonnées de partage. Renseigner les informations de livraison, l’adresse et les tarifs définitifs dans les contenus commerciaux.
