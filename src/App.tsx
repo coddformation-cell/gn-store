@@ -129,12 +129,14 @@ function App() {
       frame = requestAnimationFrame(() => {
         const maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
         const progress = Math.max(0, Math.min(1, window.scrollY / maxScroll));
-        const descent = 12 + progress * window.innerHeight * 0.68;
-        const drift = Math.sin(progress * Math.PI * 2) * Math.min(38, window.innerWidth * 0.04);
+        const startY = window.innerWidth <= 600 ? 104 : 124;
+        const descent = startY + progress * window.innerHeight * 0.9;
+        const drift = Math.sin(progress * Math.PI) * Math.min(25, window.innerWidth * 0.04);
         const scale = 0.86 + Math.sin(progress * Math.PI) * 0.14;
         orb.style.setProperty('--orb-y', `${descent}px`);
         orb.style.setProperty('--orb-x', `${drift}px`);
         orb.style.setProperty('--orb-scale', String(scale));
+        orb.style.setProperty('--orb-opacity', String(0.62 * Math.min(1, (1 - progress) * 5)));
       });
     };
 
