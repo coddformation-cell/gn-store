@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, type FormEvent } from 'react';
+import { useEffect, useMemo, useState, type FormEvent, type PointerEvent as ReactPointerEvent } from 'react';
 import './App.css';
 
 const whatsappNumber = '2250708028303';
@@ -55,6 +55,21 @@ function App() {
   });
   const updateQuantity = (productId: string, amount: number) => setCart((current) => current.map((item) => item.productId === productId ? { ...item, quantity: item.quantity + amount } : item).filter((item) => item.quantity > 0));
   const cartProducts = cart.map((line) => ({ ...line, product: products.find((product) => product.id === line.productId)! })).filter((line) => line.product);
+  const moveTilt = (event: ReactPointerEvent<HTMLElement>, selector: string, rangeX: number, rangeY: number) => {
+    if (event.pointerType !== 'mouse') return;
+    const target = event.currentTarget.querySelector<HTMLElement>(selector);
+    if (!target) return;
+    const bounds = event.currentTarget.getBoundingClientRect();
+    const x = (event.clientX - bounds.left) / bounds.width - 0.5;
+    const y = (event.clientY - bounds.top) / bounds.height - 0.5;
+    target.style.setProperty('--tilt-x', `${-y * rangeX}deg`);
+    target.style.setProperty('--tilt-y', `${x * rangeY}deg`);
+  };
+  const resetTilt = (event: ReactPointerEvent<HTMLElement>, selector: string) => {
+    const target = event.currentTarget.querySelector<HTMLElement>(selector);
+    target?.style.removeProperty('--tilt-x');
+    target?.style.removeProperty('--tilt-y');
+  };
 
   const goToWhatsApp = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -76,9 +91,9 @@ function App() {
     </header>
 
     <main>
-      <section className="hero" id="accueil">
+      <section className="hero" id="accueil" onPointerMove={(event) => moveTilt(event, '.hero-image', 4, 7)} onPointerLeave={(event) => resetTilt(event, '.hero-image')}>
         <div className="hero-image"><img src={asset('/gallery/10.jpeg')} alt="Façade et entrée de la boutique GN Store à Abidjan"/><span className="image-caption">La maison GN Store · Abidjan</span></div>
-        <div className="hero-copy"><p className="eyebrow">L’art du détail, au quotidien</p><h1>Le style<br/><em>vous ressemble.</em></h1><p>Vêtements, chaussures et accessoires choisis pour affirmer votre allure. Découvrez notre univers et demandez les disponibilités directement à la boutique.</p><a href="#boutique" className="button button-dark">Explorer la boutique <span>↗</span></a><div className="hero-signature"><span>01 —</span> L’élégance en mouvement</div></div>
+        <div className="hero-copy"><p className="eyebrow">L’art du détail, au quotidien</p><h1>Le style<br/><em>vous ressemble.</em></h1><p>Vêtements, chaussures et accessoires choisis pour affirmer votre allure. Découvrez notre univers et demandez les disponibilités directement à la boutique.</p><a href="#boutique" className="button button-light">Explorer la boutique <span>↗</span></a><div className="hero-signature"><span>01 —</span> L’élégance en mouvement</div></div>
         <div className="hero-index">GN / 2026</div>
       </section>
 
@@ -88,7 +103,7 @@ function App() {
         <div className="section-top"><div><p className="eyebrow">La sélection GN</p><h2>À chacun son <em>essentiel.</em></h2></div><p className="section-note">Les pièces et tarifs varient selon les arrivages. Écrivez-nous pour confirmer le modèle et sa disponibilité.</p></div>
         <div className="catalog-controls"><label className="search-box"><span aria-hidden="true">⌕</span><input type="search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Rechercher un article" aria-label="Rechercher un article"/></label><label className="sort-control"><span>Trier</span><select value={sort} onChange={(event) => setSort(event.target.value)} aria-label="Trier les articles"><option value="featured">À la une</option><option value="name">Nom A–Z</option></select></label></div>
         <div className="category-tabs" role="group" aria-label="Filtrer par catégorie">{categories.map((item) => <button key={item} type="button" className={category === item ? 'active' : ''} onClick={() => setCategory(item)}>{item}</button>)}</div>
-        <div className="product-grid">{filteredProducts.map((product, index) => <article className="product-card" key={product.id}>
+        <div className="product-grid">{filteredProducts.map((product, index) => <article className="product-card" key={product.id} onPointerMove={(event) => moveTilt(event, '.product-photo', 5, 7)} onPointerLeave={(event) => resetTilt(event, '.product-photo')}>
           <button className="product-photo" type="button" onClick={() => setSelected(product)} aria-label={`Voir ${product.name}`}><img src={asset(product.image)} alt={product.name} loading={index > 2 ? 'lazy' : 'eager'}/><span className="photo-number">0{index + 1}</span><span className="quick-view">Voir l’article ↗</span></button>
           <div className="product-info"><div><span className="product-category">{product.category}</span><h3>{product.name}</h3></div><button type="button" className="add-button" onClick={() => addToCart(product)} aria-label={`Ajouter ${product.name} au panier`}>＋</button></div>
           <p className="price-note">Prix & disponibilité sur demande</p>

@@ -35,3 +35,35 @@
 @media(max-width:600px){.hero-image{transform:none;box-shadow:12px 18px 34px #24201920}.visit-section:before{right:-180px;top:-150px;width:330px}.footer-contact{grid-column:1/-1;min-width:0;padding:15px}.footer-phone{font-size:12px}.footer-contact .whatsapp-icon{width:42px;height:42px}}
 @media(hover:none){.hero-image:hover,.product-card:hover .product-photo,.footer-contact:hover,.footer-contact .whatsapp-icon:hover,.button:hover{transform:none}}
 @media(prefers-reduced-motion:reduce){.hero-image,.product-card:hover .product-photo,.footer-contact:hover,.footer-contact .whatsapp-icon:hover,.button:hover{transform:none!important}}
+
+/* Cinematic motion treatment inspired by the reference, using GN Store photography and palette. */
+.hero{min-height:clamp(650px,calc(100svh - 120px),900px);background:#171613;color:#f8f5ee;overflow:hidden;isolation:isolate}
+.hero:before{content:"";position:absolute;z-index:-1;right:-110px;top:-170px;width:min(60vw,760px);aspect-ratio:1;border:1px solid #c5a66d30;border-radius:50%;background:radial-gradient(circle at 34% 32%,#b9996025,transparent 61%);box-shadow:inset 26px 22px 60px #ffffff08,0 0 110px #b1905b13;pointer-events:none}
+.hero:after{content:"";position:absolute;z-index:-1;inset:0;background:linear-gradient(110deg,#171613 5%,transparent 63%),radial-gradient(ellipse at 76% 50%,#9d7f4824,transparent 48%);pointer-events:none}
+.hero-image{z-index:1;border:1px solid #d1c4aa35;transform:perspective(1450px) rotateX(var(--tilt-x,1.5deg)) rotateY(var(--tilt-y,-3deg));transform-style:preserve-3d;box-shadow:28px 36px 72px #0008;animation:heroPhotoReveal 1.2s cubic-bezier(.2,.75,.2,1) both}
+.hero-image:hover{transform:perspective(1450px) rotateX(var(--tilt-x,1.5deg)) rotateY(var(--tilt-y,-3deg)) translateY(-5px);box-shadow:34px 44px 84px #0009}
+.hero-image:before{inset:16px;border-color:#f5ead676;transform:translateZ(34px)}
+.hero-image img{transform:scale(1.04);transition:transform 1.2s cubic-bezier(.2,.75,.2,1)}
+.hero-image:hover img{transform:scale(1.09)}
+.image-caption{transform:translateZ(38px);letter-spacing:.17em}
+.hero-copy{position:relative;z-index:2;transform-style:preserve-3d}
+.hero .eyebrow{color:#d2b47a;animation:heroFade .8s .12s both}
+.hero h1{animation:heroTextReveal 1s .22s cubic-bezier(.2,.75,.2,1) both}
+.hero h1 em{color:#c6a36a}
+.hero-copy>p:not(.eyebrow){color:#cbc5bb;animation:heroFade .8s .42s both}
+.hero .button{animation:heroFade .8s .55s both}
+.hero .button-light{background:#f4f0e7;color:#1b1916;box-shadow:0 7px 0 #b8a88544,0 18px 35px #0005}
+.hero .button-light:hover{background:#fffaf0;box-shadow:0 10px 0 #b8a88544,0 23px 40px #0007}
+.hero-signature{color:#bbb3a6;animation:heroFade .8s .7s both}
+.hero-signature span{color:#c6a36a}
+.hero-index{z-index:2;color:#c3b9a8}
+.product-photo{transform:perspective(1200px) rotateX(var(--tilt-x,0deg)) rotateY(var(--tilt-y,0deg));transform-style:preserve-3d;will-change:transform}
+.product-card:hover .product-photo{transform:perspective(1200px) rotateX(calc(var(--tilt-x,0deg) + 1deg)) rotateY(calc(var(--tilt-y,0deg) - 1deg)) translateY(-6px);box-shadow:18px 27px 42px #19161130}
+.product-card:hover .product-photo img{transform:scale(1.075)}
+@keyframes heroPhotoReveal{from{opacity:0;clip-path:inset(8% 4% 8% 4%)}to{opacity:1;clip-path:inset(0)}}
+@keyframes heroTextReveal{from{opacity:0;clip-path:inset(0 0 100% 0)}to{opacity:1;clip-path:inset(0)}}
+@keyframes heroFade{from{opacity:0;filter:blur(5px)}to{opacity:1;filter:blur(0)}}
+@media(max-width:900px){.hero{min-height:clamp(650px,calc(100svh - 120px),820px)}.hero:before{right:-190px;width:70vw}}
+@media(max-width:600px){.hero{min-height:unset}.hero:before{right:-210px;top:-80px;width:430px}.hero-image{transform:none;animation-duration:.8s;box-shadow:16px 22px 46px #0006}.hero-image:hover{transform:none}.hero-image img{transform:scale(1.02)}.hero-image:hover img{transform:scale(1.04)}.hero-signature{color:#bbb3a6}}
+@media(hover:none){.hero-image:hover,.product-card:hover .product-photo{transform:none!important}.hero-image:hover img,.product-card:hover .product-photo img{transform:none}}
+@media(prefers-reduced-motion:reduce){.hero-image,.hero .eyebrow,.hero h1,.hero-copy>p:not(.eyebrow),.hero .button,.hero-signature{animation:none!important;opacity:1;filter:none;clip-path:none}.hero-image,.hero-image:hover,.product-card:hover .product-photo,.hero .button:hover{transform:none!important}.hero-image img,.hero-image:hover img,.product-card:hover .product-photo img{transform:none}}
