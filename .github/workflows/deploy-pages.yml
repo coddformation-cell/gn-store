@@ -1,3 +1,4 @@
+# Pages allows deployments from gh-pages; this workflow builds the current master source.
 name: Build and deploy GN Store
 
 on:
